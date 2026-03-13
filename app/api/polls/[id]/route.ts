@@ -24,7 +24,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     }
 
     const body = await request.json();
-    const { action, answer } = body;
+    const { action, answer, emoji } = body;
 
     if (action === 'vote' && answer) {
         if (!poll.isActive) {
@@ -33,6 +33,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         poll.votes[answer] = (poll.votes[answer] || 0) + 1;
     } else if (action === 'stop') {
         poll.isActive = false;
+    } else if (action === 'feedback' && emoji) {
+        if (!poll.feedbacks) poll.feedbacks = {};
+        poll.feedbacks[emoji] = (poll.feedbacks[emoji] || 0) + 1;
     }
 
     return NextResponse.json(poll);

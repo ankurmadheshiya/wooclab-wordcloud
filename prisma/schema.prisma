@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum InteractionType {
+  WORD_CLOUD
+  POLL_MCQ
+  QUIZ_MCQ
+  OPEN_ENDED
+  RANKING
+  QA
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  joinCode    String   @unique // 6-digit uppercase
+  title       String
+  hostId      String
+  status      String   @default("DRAFT") // DRAFT, LIVE, FINISHED
+  activeSlide Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  slides      Slide[]
+  responses   Response[]
+  reactions   Reaction[]
+}
+
+model Slide {
+  id          String           @id @default(cuid())
+  sessionId   String
+  session     Session          @relation(fields: [sessionId], references: [id])
+  type        InteractionType
+  order       Int
+  question    String
+  settings    String?          // JSON stringified settings
+  options     Option[]
+  responses   Response[]
+}
+
+model Option {
+  id        String  @id @default(cuid())
+  slideId   String
+  slide     Slide   @relation(fields: [slideId], references: [id])
+  text      String
+  isCorrect Boolean @default(false)
+}
+
+model Response {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       Session  @relation(fields: [sessionId], references: [id])
+  slideId       String
+  slide         Slide    @relation(fields: [slideId], references: [id])
+  participantId String   // client-generated UID
+  nickname      String?
+  content       String   // word text or option ID
+  createdAt     DateTime @default(now())
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  emoji     String
+  createdAt DateTime @default(now())
+}

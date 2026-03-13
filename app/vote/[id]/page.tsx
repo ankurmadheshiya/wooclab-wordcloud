@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function VotePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const { pollState, sendVote, error } = usePoll(id, "voter");
+    const { pollState, sendVote, sendFeedback, error } = usePoll(id, "voter");
     const [answer, setAnswer] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [feedbackSent, setFeedbackSent] = useState(false);
 
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -45,12 +46,45 @@ export default function VotePage({ params }: { params: Promise<{ id: string }> }
 
     if (!pollState.isActive) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
-                <div className="text-center">
-                    <div className="bg-slate-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">🔒</div>
-                    <h1 className="text-2xl font-bold text-slate-800">Voting Closed</h1>
-                    <p className="text-slate-500 mt-2">The presenter has stopped the poll.</p>
-                </div>
+            <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center p-6">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl text-center"
+                >
+                    <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner">🔒</div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Voting Closed</h1>
+                    <p className="text-slate-500 mt-2 font-medium">The presenter has stopped the poll.</p>
+
+                    <div className="mt-12 pt-8 border-t border-slate-100">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">How was it?</h3>
+                        
+                        <div className="flex flex-wrap justify-center gap-2">
+                            {['😍', '😊', '👍', '🔥', '👏', '💡', '😮', '😂', '😢', '💯'].map((emoji) => (
+                                <button
+                                    key={emoji}
+                                    onClick={() => {
+                                        sendFeedback(emoji);
+                                        setFeedbackSent(true);
+                                    }}
+                                    className={`text-3xl p-3 rounded-2xl transition-all active:scale-90 ${feedbackSent ? 'opacity-50 grayscale cursor-default' : 'hover:bg-slate-50 hover:scale-110 active:bg-blue-50'}`}
+                                    disabled={feedbackSent}
+                                >
+                                    {emoji}
+                                </button>
+                            ))}
+                        </div>
+                        {feedbackSent && (
+                            <motion.p 
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-blue-500 font-bold mt-4 text-sm"
+                            >
+                                Thanks for your feedback! ✨
+                            </motion.p>
+                        )}
+                    </div>
+                </motion.div>
             </div>
         );
     }
