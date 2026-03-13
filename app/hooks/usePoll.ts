@@ -11,6 +11,7 @@ export interface PollState {
     isActive: boolean;
     options?: string[]; // For multiple choice
     votes: Record<string, number>; // text -> count
+    feedbacks?: Record<string, number>; // emoji -> count
 }
 
 export function usePoll(pollId: string, role: 'host' | 'voter') {
@@ -77,5 +78,20 @@ export function usePoll(pollId: string, role: 'host' | 'voter') {
         } catch (e) { console.error("Stop failed", e); }
     }, [pollId]);
 
-    return { pollState, setPollState, sendVote, stopPoll, error };
+    const sendFeedback = useCallback(async (emoji: string) => {
+        if (!pollId) return;
+        try {
+            const res = await fetch(`/api/polls/${pollId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'feedback', emoji })
+            });
+            if (res.ok) {
+                const updated = await res.json();
+                setPollState(updated);
+            }
+        } catch (e) { console.error("Feedback failed", e); }
+    }, [pollId]);
+
+    return { pollState, setPollState, sendVote, stopPoll, sendFeedback, error };
 }

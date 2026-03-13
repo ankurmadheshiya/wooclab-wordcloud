@@ -65,13 +65,41 @@ export default function HostPage({ params }: { params: Promise<{ id: string }> }
                 />
             ) : (
                 <div className="flex flex-col h-screen w-full p-8 font-sans">
-                    <header className="mb-8">
-                        <h1 className="text-4xl font-bold text-slate-800">{pollState.question}</h1>
-                        <div className="mt-4 flex items-center gap-4">
-                            <span className={`px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wide ${pollState.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                {pollState.isActive ? "Live" : "Closed"}
-                            </span>
-                            <span className="text-slate-500 font-medium">Join at {origin ? joinUrl.replace(/^https?:\/\//, '') : '...'}</span>
+                    <header className="mb-12 flex justify-between items-start">
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-5xl font-black text-slate-900 tracking-tight leading-tight">{pollState.question}</h1>
+                            <div className="flex items-center gap-3">
+                                <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest ${pollState.isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
+                                    {pollState.isActive ? "Voting Open" : "Voting Closed"}
+                                </span>
+                                <span className="text-slate-400 text-sm font-bold uppercase tracking-widest">Live Poll</span>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-3 translate-y-2">
+                            <button 
+                                onClick={() => {
+                                    navigator.clipboard.writeText(joinUrl);
+                                    alert("Link copied to clipboard!");
+                                }}
+                                className="flex items-center gap-8 bg-white px-8 py-4 rounded-3xl border-2 border-slate-100 shadow-xl hover:border-blue-200 transition-all active:scale-95 group text-left"
+                                title="Click to copy join link"
+                            >
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Join at</span>
+                                    <strong className="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                                        {origin ? joinUrl.replace(/^https?:\/\//, '') : '...'}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-slate-300 group-hover:text-blue-500">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                        </svg>
+                                    </strong>
+                                </div>
+                                <div className="h-10 w-0.5 bg-slate-100"></div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Code</span>
+                                    <strong className="text-3xl font-black text-blue-600 tracking-widest">{pollState.id}</strong>
+                                </div>
+                            </button>
                         </div>
                     </header>
 
@@ -99,7 +127,7 @@ export default function HostPage({ params }: { params: Promise<{ id: string }> }
             )}
 
             {/* Floating Controls */}
-            <div className="absolute bottom-6 left-6 z-50 flex gap-3 items-center">
+            <div className="absolute bottom-10 left-24 z-50 flex gap-4 items-center">
                 <button
                     onClick={toggleQR}
                     className="bg-white p-3 rounded-full shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600"
@@ -141,6 +169,31 @@ export default function HostPage({ params }: { params: Promise<{ id: string }> }
                 )}
             </div>
 
+            {/* Feedback Display */}
+            <AnimatePresence>
+                {pollState.feedbacks && Object.keys(pollState.feedbacks).length > 0 && (
+                    <motion.div 
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-wrap justify-center gap-2 bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl border border-slate-200 shadow-2xl items-center max-w-[90vw]"
+                    >
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 border-r border-slate-200 pr-3">Feedback</span>
+                        {Object.entries(pollState.feedbacks).map(([emoji, count]) => (
+                            <motion.div 
+                                key={emoji}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100"
+                            >
+                                <span className="text-xl">{emoji}</span>
+                                <span className="font-black text-blue-600 text-sm">{count}</span>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* QR Modal/Overlay */}
             <AnimatePresence>
                 {showQR && (
@@ -148,7 +201,7 @@ export default function HostPage({ params }: { params: Promise<{ id: string }> }
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        className="absolute bottom-24 left-6 z-50 origin-bottom-left"
+                        className="absolute bottom-28 left-24 z-50 origin-bottom-left"
                     >
                         <div className="relative">
                             <QRCodeDisplay url={joinUrl} />
