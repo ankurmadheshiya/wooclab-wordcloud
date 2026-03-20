@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
-export type PollType = 'wordcloud' | 'multiple-choice';
+export type PollType = 'wordcloud' | 'multiple-choice' | 'open-ended';
 
 export interface PollState {
     id: string;

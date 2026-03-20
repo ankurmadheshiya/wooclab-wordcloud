@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Play, Edit, Trash2, Calendar, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 export default function HostDashboard() {
     const router = useRouter();
@@ -60,10 +61,8 @@ export default function HostDashboard() {
                 </header>
 
                 {isLoading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[1, 2, 3].map(n => (
-                            <div key={n} className="h-48 bg-white rounded-2xl animate-pulse border border-slate-100 shadow-sm" />
-                        ))}
+                    <div className="flex items-center justify-center py-20">
+                        <LoadingSpinner />
                     </div>
                 ) : sessions.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-sm">

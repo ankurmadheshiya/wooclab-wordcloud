@@ -1,0 +1,30 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-gradient" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8B5CF6" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10" />
+      <feOffset dx="0" dy="10" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#shadow)">
+    <!-- Main Cloud Shape -->
+    <path d="M150 130C166.569 130 180 116.569 180 100C180 83.4315 166.569 70 150 70C148.88 70 147.78 70.061 146.696 70.1802C142.14 52.8105 126.335 40 107.5 40C83.4756 40 64 59.4756 64 83.5C64 84.8465 64.061 86.1788 64.1802 87.4912C44.7554 88.5843 30 104.568 30 124.5C30 145.487 47.0132 162.5 68 162.5H150C161.046 162.5 170 153.546 170 142.5C170 131.454 161.046 122.5 150 122.5V130Z" fill="url(#logo-gradient)"/>
+    
+    <!-- Abstract Word Shapes -->
+    <rect x="75" y="85" width="25" height="4" rx="2" fill="white" fill-opacity="0.8"/>
+    <rect x="95" y="105" width="35" height="4" rx="2" fill="white" fill-opacity="0.9"/>
+    <rect x="85" y="125" width="20" height="4" rx="2" fill="white" fill-opacity="0.7"/>
+    <rect x="120" y="80" width="15" height="4" rx="2" fill="white" fill-opacity="0.6"/>
+  </g>
+</svg>

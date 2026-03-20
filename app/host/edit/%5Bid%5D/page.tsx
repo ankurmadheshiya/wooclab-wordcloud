@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 import {
     Plus,
     Trash2,
@@ -253,7 +254,7 @@ export default function SessionEditor() {
                                     >
                                         {isGenerating ? (
                                             <div className="flex items-center gap-2">
-                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                <LoadingSpinner size="small" color="bg-white" hideLabel />
                                                 Generating...
                                             </div>
                                         ) : 'Start Generating'}
@@ -320,7 +321,7 @@ export default function SessionEditor() {
             <main className="flex-1 flex flex-col overflow-hidden">
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center">
-                        <div className="w-8 h-8 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+                        <LoadingSpinner />
                     </div>
                 ) : !activeSlide ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-10">
